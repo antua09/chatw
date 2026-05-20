@@ -181,6 +181,7 @@ input[type="text"]:focus {
   border-radius: 20px;
 }
 
+#clear-btn,
 #logout-btn {
   background: none;
   border: none;
@@ -192,9 +193,101 @@ input[type="text"]:focus {
   align-items: center;
   transition: color 0.2s, background 0.2s;
 }
+#clear-btn:hover {
+  color: #f59e0b;
+  background: rgba(245,158,11,0.08);
+}
 #logout-btn:hover {
   color: #ef4444;
   background: rgba(239,68,68,0.08);
+}
+
+/* ── Confirm Modal ───────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fade-in 0.15s ease;
+}
+.modal-overlay.hidden {
+  display: none;
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.modal {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 32px 28px;
+  max-width: 340px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  animation: slide-up 0.18s ease;
+}
+@keyframes slide-up {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.modal-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+.modal h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.modal p {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+.modal-actions {
+  display: flex;
+  gap: 10px;
+}
+.btn-cancel {
+  flex: 1;
+  padding: 12px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: border-color 0.2s, color 0.2s;
+  font-family: inherit;
+}
+.btn-cancel:hover {
+  border-color: var(--text-muted);
+  color: var(--text);
+}
+.btn-danger {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background: #ef4444;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  font-family: inherit;
+}
+.btn-danger:hover {
+  background: #dc2626;
+}
+.btn-danger:active {
+  transform: scale(0.97);
 }
 
 /* ── Messages ────────────────────────────── */

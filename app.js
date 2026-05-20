@@ -64,6 +64,10 @@ const messageInput    = document.getElementById("message-input");
 const messagesList    = document.getElementById("messages-list");
 const sendBtn         = document.getElementById("send-btn");
 const logoutBtn       = document.getElementById("logout-btn");
+const clearBtn        = document.getElementById("clear-btn");
+const confirmModal    = document.getElementById("confirm-modal");
+const modalCancel     = document.getElementById("modal-cancel");
+const modalConfirm    = document.getElementById("modal-confirm");
 const onlineCount     = document.getElementById("online-count");
 const currentUserBadge = document.getElementById("current-user-badge");
 const typingIndicator = document.getElementById("typing-indicator");
@@ -226,6 +230,27 @@ function renderMessage(key, data) {
 
   messagesList.appendChild(group);
 }
+
+// ─── Clear conversation ───────────────────────────────────────────────────────
+clearBtn.addEventListener("click", () => {
+  confirmModal.classList.remove("hidden");
+});
+
+modalCancel.addEventListener("click", () => {
+  confirmModal.classList.add("hidden");
+});
+
+confirmModal.addEventListener("click", (e) => {
+  if (e.target === confirmModal) confirmModal.classList.add("hidden");
+});
+
+modalConfirm.addEventListener("click", async () => {
+  confirmModal.classList.add("hidden");
+  await remove(messagesRef);
+  messagesList.innerHTML = "";
+  loadedMessages.clear();
+  lastSender = null;
+});
 
 // ─── Logout ───────────────────────────────────────────────────────────────────
 logoutBtn.addEventListener("click", () => {
