@@ -9,37 +9,58 @@
 <body>
   <!-- Login Screen -->
   <div id="login-screen" class="screen active">
+    <div class="upn-topbar">
+      <div class="upn-topbar-dot"></div>
+      <div class="upn-topbar-dot"></div>
+      <div class="upn-topbar-dot"></div>
+      <span>portal.upn.edu.mx — Conexión segura</span>
+    </div>
     <div class="login-card">
-      <div class="logo">
-        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-          <circle cx="24" cy="24" r="24" fill="#6C63FF"/>
-          <path d="M12 16h24v16a4 4 0 0 1-4 4H16a4 4 0 0 1-4-4V16z" fill="white" opacity="0.9"/>
-          <path d="M12 16l12 10 12-10" stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/>
-          <circle cx="32" cy="30" r="6" fill="#FF6584"/>
-          <path d="M30 30l1.5 1.5L34 28" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <h1>Chatwistron</h1>
+      <div class="login-header">
+        <div class="upn-logo">
+          <!-- Escudo UPN SVG -->
+          <svg class="upn-escudo" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="56" height="56" rx="6" fill="#0057b8"/>
+            <path d="M28 6L8 16v14c0 10 9 18 20 20 11-2 20-10 20-20V16L28 6z" fill="#003087" stroke="white" stroke-width="1.5"/>
+            <text x="28" y="26" text-anchor="middle" font-size="9" font-weight="bold" fill="white" font-family="serif">UPN</text>
+            <line x1="16" y1="30" x2="40" y2="30" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+            <text x="28" y="40" text-anchor="middle" font-size="6" fill="rgba(255,255,255,0.8)" font-family="serif">Est. 1978</text>
+          </svg>
+          <div class="upn-titles">
+            <h1>Universidad Politécnica<br>Nacional</h1>
+            <p>Sistema Integral de Servicios Escolares</p>
+          </div>
+        </div>
+        <span class="login-header-sub">Portal Estudiantil — Acceso Restringido</span>
       </div>
-      <p class="subtitle">Chat en tiempo real</p>
-      <form id="login-form">
-        <input
-          type="text"
-          id="username-input"
-          placeholder="Nombre de usuario"
-          maxlength="20"
-          autocomplete="off"
-          required
-        />
-        <input
-          type="password"
-          id="room-password"
-          placeholder="Contraseña de acceso"
-          autocomplete="off"
-          required
-        />
-        <p id="login-error" class="login-error hidden">Contraseña incorrecta</p>
-        <button type="submit" class="btn-primary">Entrar al chat</button>
-      </form>
+
+      <div class="login-body">
+        <form id="login-form">
+          <label class="form-label" for="username-input">Matrícula / Usuario</label>
+          <input
+            type="text"
+            id="username-input"
+            placeholder="Ej. A12345678"
+            maxlength="20"
+            autocomplete="off"
+            required
+          />
+          <label class="form-label" for="room-password">Contraseña</label>
+          <input
+            type="password"
+            id="room-password"
+            placeholder="Ingresa tu contraseña"
+            autocomplete="off"
+            required
+          />
+          <p id="login-error" class="login-error hidden">Usuario o contraseña incorrectos</p>
+          <button type="submit" class="btn-primary">Iniciar Sesión</button>
+        </form>
+      </div>
+
+      <div class="login-footer-note">
+        ¿Problemas para acceder? Contacta a soporte: <strong>tic@upn.edu.mx</strong>
+      </div>
     </div>
   </div>
 
