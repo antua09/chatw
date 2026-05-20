@@ -42,7 +42,7 @@ let loadedMessages = new Set();
 let cryptoKey = null; // AES-GCM key derived from room password
 
 // ─── Crypto (WebCrypto API — AES-256-GCM + PBKDF2) ───────────────────────────
-const ROOM_PASSWORD = "pon-aqui-tu-contrasena"; // ← cambia esto
+const ROOM_PASSWORD = "Heraldo225";
 const SALT = new TextEncoder().encode("chatwistron-v1-salt");
 
 async function deriveKey(password) {
