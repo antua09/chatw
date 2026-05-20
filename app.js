@@ -42,6 +42,7 @@ let loadedMessages = new Set();
 let cryptoKey = null; // AES-GCM key derived from room password
 
 // ─── Crypto (WebCrypto API — AES-256-GCM + PBKDF2) ───────────────────────────
+const ROOM_PASSWORD = "pon-aqui-tu-contrasena"; // ← cambia esto
 const SALT = new TextEncoder().encode("chatwistron-v1-salt");
 
 async function deriveKey(password) {
@@ -119,14 +120,13 @@ const messagesContainer = document.getElementById("messages-container");
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const name = usernameInput.value.trim();
-  const pass = roomPassword.value;
-  if (!name || !pass) return;
+  if (!name) return;
 
   const submitBtn = loginForm.querySelector("button[type=submit]");
-  submitBtn.textContent = "Derivando clave…";
+  submitBtn.textContent = "Entrando…";
   submitBtn.disabled = true;
 
-  cryptoKey = await deriveKey(pass);
+  cryptoKey = await deriveKey(ROOM_PASSWORD);
 
   submitBtn.textContent = "Entrar al chat";
   submitBtn.disabled = false;
