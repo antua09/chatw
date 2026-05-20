@@ -100,7 +100,8 @@ const loginScreen     = document.getElementById("login-screen");
 const chatScreen      = document.getElementById("chat-screen");
 const loginForm       = document.getElementById("login-form");
 const usernameInput   = document.getElementById("username-input");
-const roomPassword    = document.getElementById("room-password");
+const roomPasswordEl  = document.getElementById("room-password");
+const loginError      = document.getElementById("login-error");
 const messageForm     = document.getElementById("message-form");
 const messageInput    = document.getElementById("message-input");
 const messagesList    = document.getElementById("messages-list");
@@ -120,7 +121,17 @@ const messagesContainer = document.getElementById("messages-container");
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const name = usernameInput.value.trim();
-  if (!name) return;
+  const pass = roomPasswordEl.value;
+  if (!name || !pass) return;
+
+  if (pass !== ROOM_PASSWORD) {
+    loginError.classList.remove("hidden");
+    roomPasswordEl.value = "";
+    roomPasswordEl.focus();
+    return;
+  }
+
+  loginError.classList.add("hidden");
 
   const submitBtn = loginForm.querySelector("button[type=submit]");
   submitBtn.textContent = "Entrando…";
@@ -319,7 +330,7 @@ logoutBtn.addEventListener("click", () => {
   loadedMessages.clear();
   messagesList.innerHTML = "";
   usernameInput.value = "";
-  roomPassword.value = "";
+  roomPasswordEl.value = "";
   chatScreen.classList.remove("active");
   loginScreen.classList.add("active");
   usernameInput.focus();

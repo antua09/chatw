@@ -25,11 +25,19 @@
         <input
           type="text"
           id="username-input"
-          placeholder="Elige un nombre de usuario"
+          placeholder="Nombre de usuario"
           maxlength="20"
           autocomplete="off"
           required
         />
+        <input
+          type="password"
+          id="room-password"
+          placeholder="Contraseña de acceso"
+          autocomplete="off"
+          required
+        />
+        <p id="login-error" class="login-error hidden">Contraseña incorrecta</p>
         <button type="submit" class="btn-primary">Entrar al chat</button>
       </form>
     </div>
