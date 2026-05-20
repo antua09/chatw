@@ -139,7 +139,7 @@ loginForm.addEventListener("submit", async (e) => {
 
   cryptoKey = await deriveKey(ROOM_PASSWORD);
 
-  submitBtn.textContent = "Entrar al chat";
+  submitBtn.textContent = "Acceder";
   submitBtn.disabled = false;
 
   enterChat(name);
