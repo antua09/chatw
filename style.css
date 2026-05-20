@@ -92,6 +92,19 @@ input[type="text"]:focus {
   border-color: var(--accent);
 }
 
+.password-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lock-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: left;
+  padding-left: 4px;
+}
+
 .btn-primary {
   background: var(--accent);
   color: white;
@@ -164,6 +177,17 @@ input[type="text"]:focus {
 #online-count {
   font-size: 0.78rem;
   color: var(--text-muted);
+}
+
+.e2e-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #22c55e;
+  background: rgba(34,197,94,0.1);
+  padding: 3px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+  border: 1px solid rgba(34,197,94,0.25);
 }
 
 .header-right {
@@ -379,6 +403,12 @@ input[type="text"]:focus {
   background: var(--bg);
   color: var(--text);
   border-bottom-left-radius: 4px;
+}
+
+.bubble.decryption-error {
+  opacity: 0.6;
+  font-style: italic;
+  font-size: 0.82rem;
 }
 
 /* System messages */

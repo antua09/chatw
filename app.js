@@ -39,6 +39,46 @@ let myTypingRef   = null;
 let typingTimer   = null;
 let isTyping      = false;
 let loadedMessages = new Set();
+let cryptoKey = null; // AES-GCM key derived from room password
+
+// ─── Crypto (WebCrypto API — AES-256-GCM + PBKDF2) ───────────────────────────
+const SALT = new TextEncoder().encode("chatwistron-v1-salt");
+
+async function deriveKey(password) {
+  const raw = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(password),
+    "PBKDF2",
+    false,
+    ["deriveKey"]
+  );
+  return crypto.subtle.deriveKey(
+    { name: "PBKDF2", salt: SALT, iterations: 200_000, hash: "SHA-256" },
+    raw,
+    { name: "AES-GCM", length: 256 },
+    false,
+    ["encrypt", "decrypt"]
+  );
+}
+
+async function encryptText(plaintext) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const encoded = new TextEncoder().encode(plaintext);
+  const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, cryptoKey, encoded);
+  // Pack iv (12 bytes) + ciphertext into one base64 string
+  const combined = new Uint8Array(12 + ciphertext.byteLength);
+  combined.set(iv);
+  combined.set(new Uint8Array(ciphertext), 12);
+  return btoa(String.fromCharCode(...combined));
+}
+
+async function decryptText(b64) {
+  const combined = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+  const iv         = combined.slice(0, 12);
+  const ciphertext = combined.slice(12);
+  const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, cryptoKey, ciphertext);
+  return new TextDecoder().decode(plain);
+}
 
 // ─── Palette for usernames ────────────────────────────────────────────────────
 const COLORS = [
@@ -59,6 +99,7 @@ const loginScreen     = document.getElementById("login-screen");
 const chatScreen      = document.getElementById("chat-screen");
 const loginForm       = document.getElementById("login-form");
 const usernameInput   = document.getElementById("username-input");
+const roomPassword    = document.getElementById("room-password");
 const messageForm     = document.getElementById("message-form");
 const messageInput    = document.getElementById("message-input");
 const messagesList    = document.getElementById("messages-list");
@@ -75,10 +116,21 @@ const typingText      = document.getElementById("typing-text");
 const messagesContainer = document.getElementById("messages-container");
 
 // ─── Login ────────────────────────────────────────────────────────────────────
-loginForm.addEventListener("submit", (e) => {
+loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const name = usernameInput.value.trim();
-  if (!name) return;
+  const pass = roomPassword.value;
+  if (!name || !pass) return;
+
+  const submitBtn = loginForm.querySelector("button[type=submit]");
+  submitBtn.textContent = "Derivando clave…";
+  submitBtn.disabled = true;
+
+  cryptoKey = await deriveKey(pass);
+
+  submitBtn.textContent = "Entrar al chat";
+  submitBtn.disabled = false;
+
   enterChat(name);
 });
 
@@ -177,7 +229,7 @@ function listenMessages() {
   });
 }
 
-messageForm.addEventListener("submit", (e) => {
+messageForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const text = messageInput.value.trim();
   if (!text) return;
@@ -190,8 +242,9 @@ messageForm.addEventListener("submit", (e) => {
   clearTimeout(typingTimer);
   if (myTypingRef) remove(myTypingRef);
 
+  const encrypted = await encryptText(text);
   push(messagesRef, {
-    text,
+    text: encrypted,
     sender: currentUser,
     timestamp: serverTimestamp(),
   });
@@ -200,12 +253,11 @@ messageForm.addEventListener("submit", (e) => {
 // ─── Render ───────────────────────────────────────────────────────────────────
 let lastSender = null;
 
-function renderMessage(key, data) {
-  const { text, sender, timestamp } = data;
+async function renderMessage(key, data) {
+  const { text: encrypted, sender, timestamp } = data;
   const isOwn = sender === currentUser;
   const color = colorFor(sender);
 
-  // Group consecutive messages from the same sender
   const showMeta = sender !== lastSender;
   lastSender = sender;
 
@@ -225,9 +277,15 @@ function renderMessage(key, data) {
 
   const bubble = document.createElement("div");
   bubble.className = "bubble";
-  bubble.textContent = text;
-  group.appendChild(bubble);
 
+  try {
+    bubble.textContent = await decryptText(encrypted);
+  } catch {
+    bubble.textContent = "🔒 Mensaje cifrado (clave incorrecta)";
+    bubble.classList.add("decryption-error");
+  }
+
+  group.appendChild(bubble);
   messagesList.appendChild(group);
 }
 
@@ -256,10 +314,12 @@ modalConfirm.addEventListener("click", async () => {
 logoutBtn.addEventListener("click", () => {
   leaveChat();
   currentUser = null;
+  cryptoKey = null;
   lastSender = null;
   loadedMessages.clear();
   messagesList.innerHTML = "";
   usernameInput.value = "";
+  roomPassword.value = "";
   chatScreen.classList.remove("active");
   loginScreen.classList.add("active");
   usernameInput.focus();

@@ -30,6 +30,16 @@
           autocomplete="off"
           required
         />
+        <div class="password-field">
+          <input
+            type="password"
+            id="room-password"
+            placeholder="Contraseña de sala (cifrado E2E)"
+            autocomplete="off"
+            required
+          />
+          <span class="lock-hint">🔒 Solo quien tenga esta clave puede leer los mensajes</span>
+        </div>
         <button type="submit" class="btn-primary">Entrar al chat</button>
       </form>
     </div>
@@ -44,6 +54,7 @@
           <h2>Sala General</h2>
           <span id="online-count">0 en línea</span>
         </div>
+        <span class="e2e-badge" title="Cifrado extremo a extremo activo">🔒 E2E</span>
       </div>
       <div class="header-right">
         <span id="current-user-badge"></span>
