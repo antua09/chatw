@@ -9,6 +9,7 @@ import {
   set,
   update,
   remove,
+  onDisconnect,
   serverTimestamp,
   query,
   limitToLast,
@@ -241,6 +242,8 @@ function enterChat(name) {
 function registerPresence() {
   myPresenceRef = ref(db, `presence/${sanitizeKey(currentUser)}`);
   set(myPresenceRef, { name: currentUser, online: true, joinedAt: serverTimestamp() });
+  // Removes presence on server side when WebSocket drops (covers crash/close without beforeunload)
+  onDisconnect(myPresenceRef).remove();
   window.addEventListener("beforeunload", leaveChat);
 }
 
@@ -627,12 +630,26 @@ function listenTasks() {
 
 document.getElementById("new-task-form").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const title = document.getElementById("task-input").value.trim();
-  const date  = document.getElementById("task-date").value;
+  const title    = document.getElementById("task-input").value.trim();
+  const desc     = document.getElementById("task-desc-input").value.trim();
+  const assignee = document.getElementById("task-assignee-input").value.trim();
+  const goal     = document.getElementById("task-goal-input").value.trim();
+  const date     = document.getElementById("task-date").value;
   if (!title) return;
-  await push(tasksRef(), { title, dueDate: date || null, completed: false, createdAt: Date.now() });
-  document.getElementById("task-input").value = "";
-  document.getElementById("task-date").value  = "";
+  await push(tasksRef(), {
+    title,
+    description: desc     || null,
+    assignee:    assignee || null,
+    goal:        goal     || null,
+    dueDate:     date     || null,
+    completed:   false,
+    createdAt:   Date.now(),
+  });
+  document.getElementById("task-input").value          = "";
+  document.getElementById("task-desc-input").value     = "";
+  document.getElementById("task-assignee-input").value = "";
+  document.getElementById("task-goal-input").value     = "";
+  document.getElementById("task-date").value           = "";
 });
 
 function renderTasksList() {
@@ -664,12 +681,32 @@ function renderTasksList() {
     const titleEl = document.createElement("div");
     titleEl.className = "task-title";
     titleEl.textContent = task.title;
-
     info.appendChild(titleEl);
 
+    if (task.assignee) {
+      const assigneeEl = document.createElement("div");
+      assigneeEl.className = "task-meta-row";
+      assigneeEl.textContent = `👤 ${task.assignee}`;
+      info.appendChild(assigneeEl);
+    }
+
+    if (task.goal) {
+      const goalEl = document.createElement("div");
+      goalEl.className = "task-meta-row task-goal";
+      goalEl.textContent = `🎯 ${task.goal}`;
+      info.appendChild(goalEl);
+    }
+
+    if (task.description) {
+      const descEl = document.createElement("div");
+      descEl.className = "task-desc";
+      descEl.textContent = task.description;
+      info.appendChild(descEl);
+    }
+
     if (task.dueDate) {
-      const dateEl = document.createElement("div");
       const isOverdue = !task.completed && task.dueDate < today;
+      const dateEl = document.createElement("div");
       dateEl.className = `task-date${isOverdue ? " overdue" : ""}`;
       dateEl.textContent = `📅 ${formatDateLabel(task.dueDate)}${isOverdue ? " · Vencida" : ""}`;
       info.appendChild(dateEl);

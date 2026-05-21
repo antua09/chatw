@@ -110,9 +110,12 @@
           </div>
           <div class="panel-body">
             <form id="new-task-form" class="new-task-form">
-              <input type="text" id="task-input" placeholder="Nueva tarea…" maxlength="200" />
+              <input type="text" id="task-input" placeholder="Título de la tarea…" maxlength="200" required />
+              <input type="text" id="task-assignee-input" placeholder="Encargado…" maxlength="100" />
+              <input type="text" id="task-goal-input" placeholder="Meta a lograr…" maxlength="300" />
+              <textarea id="task-desc-input" placeholder="Descripción…" maxlength="500" rows="2"></textarea>
               <input type="date" id="task-date" />
-              <button type="submit" class="btn-panel-action">Agregar</button>
+              <button type="submit" class="btn-panel-action">Agregar tarea</button>
             </form>
             <div id="tasks-list" class="tasks-list"></div>
           </div>
